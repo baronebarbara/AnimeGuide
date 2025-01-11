@@ -6,11 +6,13 @@ enum ApiError: Error {
          invalidData
 }
 
-protocol ApiClientProtocol {
-    func fetch<T: Decodable>(request: RequestProtocol) async throws -> T
+struct ApiClientFactory {
+    public static func build() -> ApiClientProtocol {
+        ApiClient()
+    }
 }
 
-final class ApiClient: ApiClientProtocol {
+private final class ApiClient: ApiClientProtocol {
     private let urlSession: URLSessionProtocol
     
     init(urlSession: URLSessionProtocol = URLSession.shared) {
