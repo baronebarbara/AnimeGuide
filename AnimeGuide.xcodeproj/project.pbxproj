@@ -33,7 +33,7 @@
 		3332F0692D30B9A70096C36B /* Exceptions for "AnimeGuide" folder in "AnimeGuide" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				Sources/SupportingFiles/Info.plist,
+				Info.plist,
 			);
 			target = 3332F0402D30B9A70096C36B /* AnimeGuide */;
 		};

@@ -4,5 +4,6 @@ struct AnimeListViewCellViewModel {
     var name: String,
         genres: [String],
         year: String,
-        score: String
+        score: String,
+        imageUrl: URL?
 }

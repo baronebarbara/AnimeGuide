@@ -22,7 +22,7 @@ final class AnimeListViewCell: UITableViewCell {
     private lazy var animeImage: UIImageView = {
         let image = UIImageView()
         image.border(radius: Radius.medium)
-        //        image.image = Image.characterPlaceholder.image
+        image.image = UIImage(systemName: "photo")
         image.layer.masksToBounds = true
         image.layer.maskedCorners = [.layerMinXMinYCorner, .layerMinXMaxYCorner]
         return image
@@ -82,6 +82,7 @@ final class AnimeListViewCell: UITableViewCell {
     }()
     
     func setup(with viewModel: AnimeListViewCellViewModel) {
+        animeImage.loadImage(from: viewModel.imageUrl, placeholder: UIImage(systemName: "photo"))
         nameLabel.text = viewModel.name
         genresLabel.text = viewModel.genres.joined(separator: ",")
         yearLabel.text = viewModel.year
@@ -91,6 +92,7 @@ final class AnimeListViewCell: UITableViewCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         buildView()
+        setupStyles()
     }
     
     @available(*, unavailable)
@@ -98,15 +100,9 @@ final class AnimeListViewCell: UITableViewCell {
         super.init(coder: coder)
     }
     
-    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-        super.traitCollectionDidChange(previousTraitCollection)
-        setupStyles()
-    }
-    
     override func prepareForReuse() {
         super.prepareForReuse()
-        //        animeImage.image = Image.characterPlaceholder.image
-        //        currentDownloadTask?.cancel()
+        animeImage.image = UIImage(systemName: "photo")
     }
 }
 
@@ -140,9 +136,3 @@ extension AnimeListViewCell: ViewConfiguration {
         nameLabel.adjustsFontSizeToFitWidth = true
     }
 }
-
-//extension AnimeListViewCell: ImageReceiver {
-//    func setImage(_ image: UIImage) {
-//        animeImage.image = image
-//    }
-//}
