@@ -2,7 +2,7 @@ import XCTest
 
 @testable import AnimeGuide
 
-final class AnimeListViewModelSpec: XCTestCase {
+final class AnimeListViewModelTests: XCTestCase {
     private var viewModel: AnimeListViewModelProtocol?
     private var serviceSpy = AnimeListServiceSpy()
     

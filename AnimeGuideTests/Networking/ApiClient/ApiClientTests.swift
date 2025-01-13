@@ -2,7 +2,7 @@ import XCTest
 
 @testable import AnimeGuide
 
-final class ApiClientTest: XCTestCase {
+final class ApiClientTests: XCTestCase {
     private var mockSession: MockURLSession = MockURLSession()
     private var apiClient: ApiClient?
     
