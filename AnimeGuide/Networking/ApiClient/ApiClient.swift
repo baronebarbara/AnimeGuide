@@ -30,10 +30,6 @@ final class ApiClient: ApiClientProtocol {
         urlRequest.httpMethod = request.method.rawValue
         urlRequest.allHTTPHeaderFields = request.headers
         
-        if let body = request.body {
-            urlRequest.httpBody = try JSONEncoder().encode(body)
-        }
-        
         do {
             let (data, response) = try await urlSession.data(for: urlRequest, delegate: nil)
             

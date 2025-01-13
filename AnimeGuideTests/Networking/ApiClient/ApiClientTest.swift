@@ -114,7 +114,6 @@ final class MockURLSession: URLSessionProtocol {
 }
 
 struct MockRequest: RequestProtocol {
-    var body: (any Encodable)?
     var headers: [String: String] = [:]
     var method: RequestMethod { .get }
     var encoding: RequestEncoding { .query }

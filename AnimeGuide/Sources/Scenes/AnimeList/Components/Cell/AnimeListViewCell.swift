@@ -139,7 +139,7 @@ extension AnimeListViewCell: ViewConfiguration {
         cellContainer.shadow(color: .grayDark,
                              opacity: Constants.Opacity.shadow,
                              offset: shadowOffset,
-                             radius: 5)
+                             radius: Radius.low)
         
         backgroundColor = .background
         selectionStyle = .none

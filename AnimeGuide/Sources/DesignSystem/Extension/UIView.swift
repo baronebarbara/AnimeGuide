@@ -33,20 +33,4 @@ extension UIView {
             addSubview(view)
         }
     }
-    
-    func animate(_ animations: @escaping (() -> Void)) {
-        UIView.transition(with: self, duration: 0.3, options: .transitionCrossDissolve) {
-            animations()
-        }
-    }
-    
-    func shrink(completion: @escaping ((Bool) -> Void)) {
-        UIView.animate(withDuration: 0.2, animations: { [unowned self] in
-            self.transform = CGAffineTransform(scaleX: 0.95, y: 0.95)
-        }, completion: { _ in
-            UIView.animate(withDuration: 0.2,  animations: { [unowned self] in
-                self.transform = .identity
-            }, completion: completion)
-        })
-    }
 }
