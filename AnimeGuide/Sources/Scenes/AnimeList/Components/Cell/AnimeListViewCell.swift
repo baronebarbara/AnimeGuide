@@ -14,6 +14,14 @@ extension AnimeListViewCell.Constants {
         static let border: CGFloat = 0.25
         static let shadow: Float = 0.1
     }
+    
+    enum Images {
+        static let placeholder: String = "placeholder"
+    }
+    
+    enum Icons {
+        static let star: String = "star"
+    }
 }
 
 final class AnimeListViewCell: UITableViewCell {
@@ -22,15 +30,15 @@ final class AnimeListViewCell: UITableViewCell {
     private lazy var animeImage: UIImageView = {
         let image = UIImageView()
         image.border(radius: Radius.medium)
-        image.image = UIImage(systemName: "photo")
+        image.image = UIImage(named: Constants.Images.placeholder)
         image.layer.masksToBounds = true
         image.layer.maskedCorners = [.layerMinXMinYCorner, .layerMinXMaxYCorner]
         return image
     }()
     
-    private lazy var nameLabel = UILabel.build(type: .highlightSecondaryTitle, color: .systemGray4, numberOfLines: 1)
+    private lazy var nameLabel = UILabel.build(type: .highlightSecondaryTitle, color: .mainPrimary, numberOfLines: 1)
     
-    private lazy var genresLabel = UILabel.build(type: .caption, color: .systemGray3)
+    private lazy var genresLabel = UILabel.build(type: .caption, color: .grayDark)
     
     private lazy var topStackView: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [nameLabel, genresLabel])
@@ -39,16 +47,16 @@ final class AnimeListViewCell: UITableViewCell {
         return stackView
     }()
     
-    private lazy var yearLabel = UILabel.build(type: .caption, color: .systemGray3)
+    private lazy var yearLabel = UILabel.build(type: .caption, color: .grayDark)
     
     private lazy var scoreImage: UIImageView = {
         let image = UIImageView()
         image.border(radius: Radius.medium)
-        image.image = UIImage(named: "star")
+        image.image = UIImage(named: Constants.Icons.star)
         return image
     }()
     
-    private lazy var scoreLabel = UILabel.build(type: .caption, color: .systemGray3)
+    private lazy var scoreLabel = UILabel.build(type: .caption, color: .turquoise)
     
     private lazy var scoreStackView: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [scoreImage, scoreLabel])
@@ -73,16 +81,18 @@ final class AnimeListViewCell: UITableViewCell {
         return stackView
     }()
     
-    private lazy var rootStackView: UIStackView = UIStackView(arrangedSubviews: [animeImage, labelsStackView])
+    private lazy var rootStackView: UIStackView = UIStackView(arrangedSubviews: [animeImage,
+                                                                                 labelsStackView])
     
     private lazy var cellContainer: UIView = {
         let view = UIView()
-        view.backgroundColor = .green
+        view.backgroundColor = .background
         return view
     }()
     
     func setup(with viewModel: AnimeListViewCellViewModel) {
-        animeImage.loadImage(from: viewModel.imageUrl, placeholder: UIImage(systemName: "photo"))
+        animeImage.loadImage(from: viewModel.imageUrl,
+                             placeholder: UIImage(named: Constants.Images.placeholder))
         nameLabel.text = viewModel.name
         genresLabel.text = viewModel.genres.joined(separator: ",")
         yearLabel.text = viewModel.year
@@ -102,7 +112,7 @@ final class AnimeListViewCell: UITableViewCell {
     
     override func prepareForReuse() {
         super.prepareForReuse()
-        animeImage.image = UIImage(systemName: "photo")
+        animeImage.image = UIImage(named: Constants.Images.placeholder)
     }
 }
 
@@ -121,17 +131,17 @@ extension AnimeListViewCell: ViewConfiguration {
     
     func setupStyles() {
         let shadowOffset = CGSize(width: 0, height: 3)
-        cellContainer.border(color: .blue,
+        cellContainer.border(color: .mainPrimary,
                              width: 1,
                              opacity: Constants.Opacity.border,
                              radius: Radius.medium)
         
-        cellContainer.shadow(color: .blue,
+        cellContainer.shadow(color: .grayDark,
                              opacity: Constants.Opacity.shadow,
                              offset: shadowOffset,
                              radius: 5)
         
-        backgroundColor = .gray
+        backgroundColor = .background
         selectionStyle = .none
         nameLabel.adjustsFontSizeToFitWidth = true
     }

@@ -30,28 +30,48 @@ final class AnimeListViewModel: @preconcurrency AnimeListViewModelProtocol {
         Task {
             defer { isFetching = false }
             do {
-                let response = try await animeService.fetchList(page: currentPage)
-                
-                if let pagination = response.pagination {
-                    currentPage = pagination.currentPage ?? 0
-                    hasNextPage = pagination.hasNextPage ?? false
-                }
-                
-                let newAnimes = response.data.map { anime in
-                    AnimeListViewCellViewModel(
-                        name: anime.title ?? "",
-                        genres: anime.genres.compactMap { $0.name },
-                        year: anime.aired.from.flatMap { String($0.prefix(4)) } ?? "",
-                        score: String(format: "%.1f", anime.score ?? 0.0),
-                        imageUrl: URL(string: anime.images?.jpg?.imageUrl ?? "")
-                    )
-                }
-                
-                allAnimeList.append(contentsOf: newAnimes)
-                onAnimeListUpdate?(allAnimeList)
+                let response = try await fetchAnimeData(page: currentPage)
+                updatePagination(from: response.pagination)
+                let newAnimes = mapAnimeResponseToViewModels(response.data)
+                updateAnimeList(with: newAnimes)
             } catch {
-                onError?("Failed to fetch anime list: \(error.localizedDescription)")
+                handleFetchError(error)
             }
         }
+    }
+    
+    // MARK: - Private Methods
+    private func fetchAnimeData(page: Int) async throws -> AnimeResponse {
+        return try await animeService.fetchList(page: page)
+    }
+    
+    private func updatePagination(from pagination: AnimeResponse.Pagination?) {
+        if let pagination = pagination {
+            currentPage = pagination.currentPage ?? 0
+            hasNextPage = pagination.hasNextPage ?? false
+        } else {
+            hasNextPage = false
+        }
+    }
+    
+    private func mapAnimeResponseToViewModels(_ data: [AnimeResponse.Anime]) -> [AnimeListViewCellViewModel] {
+        return data.map { anime in
+            AnimeListViewCellViewModel(
+                name: anime.title ?? "",
+                genres: anime.genres.compactMap { $0.name },
+                year: anime.aired.from.flatMap { String($0.prefix(4)) } ?? "",
+                score: String(format: "%.1f", anime.score ?? 0.0),
+                imageUrl: URL(string: anime.images?.jpg?.imageUrl ?? "")
+            )
+        }
+    }
+    
+    private func updateAnimeList(with newAnimes: [AnimeListViewCellViewModel]) {
+        allAnimeList.append(contentsOf: newAnimes)
+        onAnimeListUpdate?(allAnimeList)
+    }
+    
+    private func handleFetchError(_ error: Error) {
+        onError?("Failed to fetch anime list: \(error.localizedDescription)")
     }
 }

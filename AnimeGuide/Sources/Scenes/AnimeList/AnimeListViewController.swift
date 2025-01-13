@@ -2,29 +2,45 @@ import UIKit
 
 extension AnimeListViewController.Constants {
     enum Insets {
-        static var tableView = UIEdgeInsets(horizontal: Spacing.space3)
-        static var header = UIEdgeInsets(vertical: Spacing.space2)
+        static var title = UIEdgeInsets(vertical: Spacing.space2),
+                   tableView = UIEdgeInsets(horizontal: Spacing.space3)
+    }
+    
+    enum Strings {
+        static var navTitle = "Animes",
+                   titleText = "Fique por dentro dos animes mais populares",
+                   errorTitle = "Error",
+                   errorButton = "OK"
     }
 }
 
 final class AnimeListViewController: UIViewController {
     fileprivate enum Constants { }
     
-    private lazy var subtitleLabel = UILabel.build(type: .title, color: .systemGray2, text: "Explore os animes mais populares")
+    private lazy var titleLabel = UILabel.build(type: .highlightSecondaryTitle,
+                                                color: .windsor,
+                                                text: Constants.Strings.titleText)
     
     private lazy var tableView: UITableView = {
-        let tableView = UITableView(frame: .zero, style: .grouped)
+        let tableView = UITableView(frame: .zero,
+                                    style: .grouped)
         tableView.separatorStyle = .none
-        tableView.register(AnimeListViewCell.self, forCellReuseIdentifier: AnimeListViewCell.identifier)
-        tableView.backgroundColor = .clear
+        tableView.register(AnimeListViewCell.self,
+                           forCellReuseIdentifier: AnimeListViewCell.identifier)
+        tableView.backgroundColor = .background
         tableView.showsVerticalScrollIndicator = false
-        tableView.keyboardDismissMode = .onDrag
         tableView.sectionHeaderHeight = .zero
         tableView.sectionFooterHeight = .zero
-        tableView.delaysContentTouches = false
         tableView.dataSource = self
         tableView.delegate = self
         return tableView
+    }()
+    
+    private lazy var activityIndicator: UIActivityIndicatorView = {
+        let indicator = UIActivityIndicatorView(style: .large)
+        indicator.color = .grayDark
+        indicator.hidesWhenStopped = true
+        return indicator
     }()
     
     private var viewModel: AnimeListViewModelProtocol
@@ -40,9 +56,10 @@ final class AnimeListViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = "Animes"
+        title = Constants.Strings.navTitle
         buildView()
         setupBindings()
+        activityIndicator.startAnimating()
         viewModel.fetchAnimeList()
     }
     
@@ -53,40 +70,66 @@ final class AnimeListViewController: UIViewController {
     
     private func setupNavigationBar() {
         navigationController?.navigationBar.prefersLargeTitles = true
-        navigationController?.navigationBar.tintColor = .systemGray
+        navigationController?.navigationBar.tintColor = .grayDark
     }
     
     private func setupBindings() {
         viewModel.onAnimeListUpdate = { [weak self] animes in
+            self?.activityIndicator.stopAnimating()
             self?.animeList = animes
             self?.tableView.reloadData()
         }
         
         viewModel.onError = { [weak self] errorMessage in
+            self?.activityIndicator.stopAnimating()
             self?.showErrorAlert(message: errorMessage)
         }
     }
     
     private func showErrorAlert(message: String) {
-        let alert = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        let alert = UIAlertController(title: Constants.Strings.errorTitle,
+                                      message: message,
+                                      preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: Constants.Strings.errorButton,
+                                      style: .default))
         present(alert, animated: true)
     }
 }
 
 extension AnimeListViewController: ViewConfiguration {
     func setupConstraints() {
-        subtitleLabel.fitToParent(with: Constants.Insets.header)
-        tableView.fitToParent(with: Constants.Insets.tableView)
+        titleLabel.anchor(
+            top: view.safeAreaLayoutGuide.topAnchor,
+            leading: view.leadingAnchor,
+            trailing: view.trailingAnchor,
+            padding: UIEdgeInsets(top: Constants.Insets.title.top,
+                                  left: Spacing.space3,
+                                  bottom: Spacing.space0,
+                                  right: Spacing.space3)
+        )
+        
+        tableView.anchor(
+            top: titleLabel.bottomAnchor,
+            bottom: view.bottomAnchor,
+            leading: view.leadingAnchor,
+            trailing: view.trailingAnchor,
+            padding: Constants.Insets.tableView
+        )
+        
+        activityIndicator.anchor(
+            centerX: view.centerXAnchor,
+            centerY: view.centerYAnchor
+        )
     }
     
     func setupHierarchy() {
-        view.addSubviews(subtitleLabel,
-                         tableView)
+        view.addSubviews(titleLabel,
+                         tableView,
+                         activityIndicator)
     }
     
     func setupStyles() {
-        view.backgroundColor = .white
+        view.backgroundColor = .background
     }
 }
 
